@@ -3,27 +3,28 @@
 void wsp_vortex_initialize(uint32_t seed, struct wsp_vortex_s *s) {
   unsigned short i = 1;
 
-  s->a[0] = seed + 1111111111;
+  s->blocks[0] = seed + 1111111111;
 
   while (i != 1024) {
-    s->a[i] = s->a[i - 1] + 1;
+    s->blocks[i] = s->blocks[i - 1] + 1;
     i++;
   }
 
-  s->b = seed;
-  s->c = s->b + seed;
-  s->d = s->c + seed;
+  s->blocks_selector = seed;
+  s->increment = s->blocks_selector + seed;
+  s->increment_offset = s->increment + seed;
 }
 
 uint32_t wsp_vortex_randomize(struct wsp_vortex_s *s) {
-  uint32_t _a = s->a[s->d & 1023];
-  uint32_t _b = s->b ^ s->c;
+  uint32_t block = s->blocks[s->blocks_selector & 1023];
+  uint32_t increment_offset_capture = s->increment_offset ^ s->increment;
 
-  s->a[s->d & 1023] += _b;
-  s->b = ((s->b << 14) | (s->b >> 18)) + s->c;
-  s->c += 1111111111;
-  s->d++;
-  _a += s->c + _b;
-  s->a[_a & 1023] += s->d + _a;
-  return _a;
+  s->blocks[s->blocks_selector & 1023] += increment_offset_capture;
+  s->increment_offset = ((s->increment_offset << 14)
+    | (s->increment_offset >> 18)) + s->increment;
+  s->increment += 1111111111;
+  s->blocks_selector++;
+  block += s->increment + increment_offset_capture;
+  s->blocks[block & 1023] += s->blocks_selector + block;
+  return block;
 }
