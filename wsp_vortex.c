@@ -20,8 +20,8 @@ uint32_t wsp_vortex_randomize(struct wsp_vortex_s *s) {
   uint32_t increment_offset_capture = s->increment_offset ^ s->increment;
 
   s->blocks[s->blocks_selector & 1023] += increment_offset_capture;
-  s->increment_offset = ((s->increment_offset << 8)
-    | (s->increment_offset >> 24)) + s->increment;
+  s->increment_offset = ((s->increment_offset << 16)
+    | (s->increment_offset >> 16)) + s->increment;
   s->increment += 1111111111;
   s->blocks_selector++;
   block += s->increment + increment_offset_capture;
