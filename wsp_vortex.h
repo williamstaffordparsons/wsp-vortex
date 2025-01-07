@@ -10,7 +10,7 @@ struct wsp_vortex_s {
   uint32_t increment_offset;
 };
 
-void wsp_vortex_initialize(uint32_t seed, struct wsp_vortex_s *s);
+void wsp_vortex_initialize(const uint32_t seed, struct wsp_vortex_s *s);
 
 uint32_t wsp_vortex_randomize(struct wsp_vortex_s *s);
 
